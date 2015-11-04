@@ -1,0 +1,6 @@
+.tox
+.build
+*.pyc
+/doc/build/
+/fuel-plugin-calamari-*.noarch*.rpm
+/fuel-plugin-calamari-*.pdf

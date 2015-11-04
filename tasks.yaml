@@ -1,0 +1,54 @@
+- role: ['controller', 'primary-controller', 'ceph-osd']
+  stage: post_deployment/6000
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/calamari-salt.pp
+    puppet_modules: "puppet/modules/:/etc/puppet/modules/"
+    timeout: 600
+
+- role: ['controller', 'primary-controller', 'ceph-osd']
+  stage: post_deployment/6001
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/calamari-agent.pp
+    puppet_modules: "puppet/modules/:/etc/puppet/modules/"
+    timeout: 600
+
+- role: ['base-os']
+  stage: post_deployment/6002
+  type: shell
+  parameters:
+    cmd: if hiera user_node_name | egrep '^calamari$'; then puppet apply /etc/puppet/modules/osnailyfacter/modular/netconfig/netconfig.pp; fi
+    timeout: 720
+
+- role: ['base-os']
+  stage: post_deployment/6003
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/calamari-salt.pp
+    puppet_modules: "puppet/modules/:/etc/puppet/modules/"
+    timeout: 720
+
+- role: ['base-os']
+  stage: post_deployment/6004
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/calamari-server.pp
+    puppet_modules: "puppet/modules/:/etc/puppet/modules/"
+    timeout: 720
+
+- role: ['controller', 'primary-controller', 'ceph-osd']
+  stage: post_deployment/6005
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/restart-salt.pp
+    puppet_modules: "puppet/modules/:/etc/puppet/modules/"
+    timeout: 720
+
+- role: ['base-os']
+  stage: post_deployment/6006
+  type: puppet
+  parameters:
+    puppet_manifest: puppet/manifests/complete-centos.pp
+    puppet_modules: "puppet/modules/:/etc/puppet/modules/"
+    timeout: 720
